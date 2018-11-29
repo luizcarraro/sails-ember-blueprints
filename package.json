@@ -1,6 +1,6 @@
 {
   "name": "sails-ember-blueprints",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate a Ember Data compatible blueprints in your Sails project.",
   "author": {
     "name": "Luiz Carraro",
