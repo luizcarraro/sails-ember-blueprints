@@ -17,9 +17,8 @@ var _ = require( 'lodash' );
  *
  */
 module.exports = function updateOneRecord( req, res ) {
-
 	// Look up the model
-	var Model = actionUtil.parseModel( req );
+	var	Model	=	actionUtil.parseModel( req );
 
 	// Locate and validate the required `id` parameter.
 	var pk = actionUtil.requirePk( req );

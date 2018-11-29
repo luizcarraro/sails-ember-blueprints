@@ -1,46 +1,38 @@
 {
-  "name": "sails-generate-ember-blueprints",
+  "name": "sails-ember-blueprints",
   "version": "0.0.9",
   "description": "Generate a Ember Data compatible blueprints in your Sails project.",
   "author": {
-    "name": "Marcus Paeschke",
-    "email": "marcus@incom.org"
+    "name": "Luiz Carraro",
+    "email": "luizcarraro@me.com"
   },
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "node tests/runner"
   },
-  "homepage": "https://github.com/mphasize/sails-generate-ember-blueprints",
+  "homepage": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mphasize/sails-generate-ember-blueprints.git"
+    "url": ""
   },
   "bugs": {
-    "url": "http://github.com/mphasize/sails-generate-ember-blueprints/issues",
-    "email": "marcus@incom.org"
+    "url": "http://github.com/luizcarraro/sails-ember-blueprints",
+    "email": "luizcarraro@me.com"
   },
   "keywords": [
     "sails",
     "ember",
-    "generator",
-    "generate",
     "blueprint"
   ],
   "license": "MIT",
   "dependencies": {
-    "lodash": "~3.2.0",
-    "pluralize": "^1.1.0",
-    "merge-defaults": "^0.2.1"
+    "lodash": "^4.17.11",
+    "merge-defaults": "^0.2.1",
+    "pluralize": "^1.2.1"
   },
   "devDependencies": {
-    "glob": "^5.0.5",
-    "mocha": "^2.2.4",
-    "mocha-eslint": "^0.1.4",
-    "sails-generate": "*"
-  },
-  "sailsGenerator": {
-    "type": "ember-blueprints",
-    "behavior": "add `sails generate ember-blueprints`",
-    "sailsVersion": "0.10.x"
+    "glob": "^7.1.3",
+    "mocha": "^5.2.0",
+    "mocha-eslint": "^4.1.0"
   }
 }
