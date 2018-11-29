@@ -5,18 +5,16 @@ const _ = require('lodash');
 const util = require('util');
 const pluralize = require('pluralize');
 
-// var forEach       = require('lodash/collection/forEach');
-// var pluck         = require('lodash/collection/pluck');
-// var includes      = require('lodash/collection/includes');
-// var isArray       = require('lodash/lang/isArray');
-// var isString      = require('lodash/lang/isString');
-// var isPlainObject = require('lodash/lang/isPlainObject');
-// var isObject      = require('lodash/lang/isObject');
-// var isUndefined   = require('lodash/lang/isUndefined');
-// var create        = require('lodash/object/create');
-// var omit          = require('lodash/object/omit');
-// var merge         = require('lodash/object/merge');
-// var camelCase     = require('lodash/string/camelCase');
+const includes      = _.includes;
+const isArray       = _.isArray;
+const isString      = _.isString;
+const isPlainObject = _.isPlainObject;
+const isObject      = _.isObject;
+const isUndefined   = _.isUndefined;
+const create        = _.create;
+const omit          = _.omit;
+const merge         = _.merge;
+const camelCase     = _.camelCase;
 
 
 // Parameter used for jsonp callback is constant, as far as
@@ -97,7 +95,7 @@ module.exports = {
 
     // many or just one?
     if ( plural ) {
-      forEach( records, ( record ) => {
+      _.forEach( records, ( record ) => {
         json[ documentIdentifier ] = json[ documentIdentifier ].concat( prepareOneRecord( record ) );
       } );
     } else {
@@ -106,7 +104,7 @@ module.exports = {
 
     if ( sideload ) {
       // filter duplicates in sideloaded records
-      forEach( json, ( array, key ) => {
+      _.forEach( json, ( array, key ) => {
         if ( !plural && key === documentIdentifier ) { return; }
         json[ key ] = _.uniq( array, ( record ) => {
           return record.id;
@@ -180,7 +178,7 @@ module.exports = {
    * @return {[type]}              [description]
    */
   subscribeDeep: function ( req, record ) {
-    forEach( req.options.associations, ( assoc ) => {
+    _.forEach( req.options.associations, ( assoc ) => {
 
       // Look up identity of associated model
       const ident = assoc[ assoc.type ];
@@ -192,7 +190,7 @@ module.exports = {
 
       // Subscribe to each associated model instance in a collection
       if ( assoc.type === 'collection' ) {
-        forEach( record[ assoc.alias ], ( associatedInstance ) => {
+        _.forEach( record[ assoc.alias ], ( associatedInstance ) => {
           AssociatedModel.subscribe( req, associatedInstance );
         } );
       }
