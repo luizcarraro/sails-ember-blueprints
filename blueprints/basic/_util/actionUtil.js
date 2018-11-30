@@ -14,7 +14,6 @@ const isUndefined   = _.isUndefined;
 const create        = _.create;
 const omit          = _.omit;
 const merge         = _.merge;
-const camelCase     = _.camelCase;
 
 
 // Parameter used for jsonp callback is constant, as far as
@@ -81,7 +80,7 @@ module.exports = {
 
         if ( assoc.type === 'collection' && record[ assoc.alias ] && record[ assoc.alias ].length > 0 ) {
           if ( sideload ) { json[ assocName ] = json[ assocName ].concat( record[ assoc.alias ] ); }
-          record[ assoc.alias ] = _.pluck( record[ assoc.alias ], 'id' );
+          record[ assoc.alias ] = _.map( record[ assoc.alias ], 'id' );
         }
         if ( assoc.type === 'model' && record[ assoc.alias ] ) {
           if ( sideload ) {
@@ -335,7 +334,7 @@ module.exports = {
     }
 
     // Get values using the model identity as resource identifier
-    let values = req.param( camelCase(model.globalId) ) || {};
+    let values = req.param( _.camelCase(model.globalId) ) || {};
 
     // Omit built-in runtime config (like query modifiers)
     values = omit( values, blacklist || [] );
