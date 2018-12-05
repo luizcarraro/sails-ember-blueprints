@@ -1,8 +1,8 @@
 /**
  * Module dependencies
  */
-var util = require( 'util' ),
-  actionUtil = require( './_util/actionUtil' );
+const util = require( 'util' );
+const actionUtil = require( './_util/actionUtil' );
 
 /**
  * Enable sideloading. Edit config/blueprints.js and add:
@@ -13,7 +13,7 @@ var util = require( 'util' ),
  *
  * @type {Boolean}
  */
-var performSideload = (sails.config.blueprints.ember && sails.config.blueprints.ember.sideload);
+const performSideload = (sails.config.blueprints.ember && sails.config.blueprints.ember.sideload);
 
 /**
  * Find One Record
@@ -30,23 +30,24 @@ var performSideload = (sails.config.blueprints.ember && sails.config.blueprints.
  * @param {String} callback - default jsonp callback param (i.e. the name of the js function returned)
  */
 
-module.exports = function findOneRecord( req, res ) {
+module.exports = async function findOneRecord( req, res ) {
 
-  var Model = actionUtil.parseModel( req );
-  var pk = actionUtil.requirePk( req );
+  const Model = actionUtil.parseModel( req );
+  const pk = actionUtil.requirePk( req );
+  const criteria = actionUtil.parseCriteria( req );
+  let query = Model.findOne( pk ).where(criteria);
 
-  var query = Model.findOne( pk );
   query = actionUtil.populateEach( query, req );
-  query.exec( function found( err, matchingRecord ) {
-    if ( err ) return res.serverError( err );
-    if ( !matchingRecord ) return res.notFound( 'No record found with the specified `id`.' );
 
-    if ( sails.hooks.pubsub && req.isSocket ) {
-      Model.subscribe( req, matchingRecord );
-      actionUtil.subscribeDeep( req, matchingRecord );
-    }
+  const matchingRecord = await query;
 
-    res.ok( actionUtil.emberizeJSON( Model, matchingRecord, req.options.associations, performSideload ) );
-  } );
+  if ( !matchingRecord ) { return res.notFound( 'No record found with the specified `id`.' ); }
+
+  if ( sails.hooks.pubsub && req.isSocket ) {
+    Model.subscribe( req, matchingRecord );
+    actionUtil.subscribeDeep( req, matchingRecord );
+  }
+
+  res.ok( actionUtil.emberizeJSON( Model, matchingRecord, req.options.associations, performSideload ) );
 
 };

@@ -1,8 +1,9 @@
 /**
  * Module dependencies
  */
-var util = require( 'util' ),
-  actionUtil = require( './_util/actionUtil' );
+const  util = require( 'util' );
+const actionUtil = require( './_util/actionUtil' );
+const _ = require('lodash');
 
 /**
  * Enable sideloading. Edit config/blueprints.js and add:
@@ -13,7 +14,7 @@ var util = require( 'util' ),
  *
  * @type {Boolean}
  */
-var performSideload = (sails.config.blueprints.ember && sails.config.blueprints.ember.sideload);
+const performSideload = (sails.config.blueprints.ember && sails.config.blueprints.ember.sideload);
 
 /**
  * Find Records
@@ -33,10 +34,10 @@ var performSideload = (sails.config.blueprints.ember && sails.config.blueprints.
  * @param {String} callback - default jsonp callback param (i.e. the name of the js function returned)
  */
 
-module.exports = function findRecords( req, res ) {
+module.exports = async function findRecords( req, res ) {
 
   // Look up the model
-  var Model = actionUtil.parseModel( req );
+  const Model = actionUtil.parseModel( req );
 
   /* ENABLE if needed ( see https://github.com/mphasize/sails-ember-blueprints/issues/3 )
    * ----------------
@@ -50,15 +51,17 @@ module.exports = function findRecords( req, res ) {
   // }
 
   // Lookup for records that match the specified criteria
-  var query = Model.find()
+  let query = Model.find()
     .where( actionUtil.parseCriteria( req ) )
     .limit( actionUtil.parseLimit( req ) )
     .skip( actionUtil.parseSkip( req ) )
     .sort( actionUtil.parseSort( req ) );
-
   query = actionUtil.populateEach( query, req );
-  query.exec( function found( err, matchingRecords ) {
-    if ( err ) return res.serverError( err );
+
+  try {
+    const matchingRecords = await query;
+
+    const count = await Model.count().where(actionUtil.parseCriteria(req));
 
     // Only `.watch()` for new instances of the model if
     // `autoWatch` is enabled.
@@ -68,11 +71,17 @@ module.exports = function findRecords( req, res ) {
         Model.watch( req );
       }
       // Also subscribe to instances of all associated models
-      _.each( matchingRecords, function ( record ) {
+      _.each( matchingRecords, ( record ) => {
         actionUtil.subscribeDeep( req, record );
       } );
     }
 
-    res.ok( actionUtil.emberizeJSON( Model, matchingRecords, req.options.associations, performSideload ) );
-  } );
+    const meta = {
+      total: count
+    };
+
+    res.ok( _.extend(actionUtil.emberizeJSON( Model, matchingRecords, req.options.associations, performSideload, count ), {meta} ));
+  } catch(err) {
+    return res.serverError( err );
+  }
 };
